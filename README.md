@@ -1,6 +1,6 @@
 # LCOM Project
 
-LCOM Project for group GRUPO_2LEIC&lt;m&gt;&lt;n&gt;_&lt;p&gt;.
+LCOM Project for group GRUPO_2LEIC11_2.
 
 Group members:
 
