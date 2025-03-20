@@ -81,12 +81,12 @@ util_sys_inb(port, st);
 return 0;
 }
 
-int (timer_display_conf)(uint8_t timer, uint8_t st, enum timer_status_field field) {
+int (timer_display_conf)(uint8_t timer, uint8_t conf, enum timer_status_field field) {
   printf("Timer %d Configuration:\n", timer);
 
     switch (field) {
         case tsf_initial: {
-            uint8_t access_type = (st >> 4) & 0x03;
+            uint8_t access_type = (conf >> 4) & 0x03;
             printf("  Access Type: ");
             switch (access_type) {
                 case 0: printf("Latch Count Value Command\n"); break;
@@ -99,7 +99,7 @@ int (timer_display_conf)(uint8_t timer, uint8_t st, enum timer_status_field fiel
         }
 
         case tsf_mode: {
-            uint8_t mode = (st >> 1) & 0x07;
+            uint8_t mode = (conf >> 1) & 0x07;
             printf("  Mode: ");
             switch (mode) {
                 case 0: printf("Interrupt on Terminal Count (Mode 0)\n"); break;
@@ -114,15 +114,15 @@ int (timer_display_conf)(uint8_t timer, uint8_t st, enum timer_status_field fiel
         }
 
         case tsf_base: {
-            uint8_t base = st & TIMER_BCD;
+            uint8_t base = conf & TIMER_BCD;
             printf("  Counting Mode: %s\n", base ? "BCD (Binary Coded Decimal mode)" : "Binary (16-bit mode)");
             break;
         }
 
         case tsf_all: {
-            timer_display_conf(timer, st, tsf_initial);
-            timer_display_conf(timer, st, tsf_mode);
-            timer_display_conf(timer, st, tsf_base);
+            timer_display_conf(timer, conf, tsf_initial);
+            timer_display_conf(timer, conf, tsf_mode);
+            timer_display_conf(timer, conf, tsf_base);
             break;
         }
 
