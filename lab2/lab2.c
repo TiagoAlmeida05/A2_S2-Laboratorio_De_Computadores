@@ -29,23 +29,15 @@ int main(int argc, char *argv[]) {
 }
 
 int(timer_test_read_config)(uint8_t timer, enum timer_status_field field) {
-  if (timer > 2) {
-    printf("Invalid timer number: %d\n", timer);
-    return 1;
-  }
-
   uint8_t status;
-
-  if (timer_get_conf(timer, &status) != 0) {
-    printf("Failed to read timer %d configuration.\n", timer);
-    return 1;
-  }
-
-  return timer_display_conf(timer, status, field);
+  if (timer_get_conf(timer, &status) != 0) return 1;
+  if (timer_display_conf(timer, status, field) != 0) return 1;
+  return 0;
 }
 
 int(timer_test_time_base)(uint8_t timer, uint32_t freq) {
-  return timer_set_frequency(timer, freq);
+  if(timer_set_frequency(timer, freq) !=0) return 1;
+  return 0;
 }
 
 extern int counter;

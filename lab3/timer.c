@@ -1,9 +1,8 @@
 #include <lcom/lcf.h>
 #include <lcom/timer.h>
-
 #include <stdint.h>
-
 #include "i8254.h"
+
 int counter = 0;
 int(timer_set_frequency)(uint8_t timer, uint32_t freq) {
   if (freq < 19 || freq > TIMER_FREQ) {
