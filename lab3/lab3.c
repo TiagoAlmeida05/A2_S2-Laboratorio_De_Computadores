@@ -30,12 +30,13 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+uint32_t inb_counter = 0;
+
 int(kbd_test_scan)() {
   int ipc_status;
   message msg;
   int r;
   uint8_t irq_set;
-  uint32_t counter = 0;
 
   if (keyboard_subscribe_int(&irq_set) != 0) {
     return 1;
@@ -51,7 +52,6 @@ int(kbd_test_scan)() {
         case HARDWARE:
           if (msg.m_notify.interrupts & irq_set) {
             kbc_ih();
-            counter += 2;
             if (scancode & BIT(7)) {
               kbd_print_scancode(false, scancode == 0xE0 ? 2 : 1, &scancode);
             }
@@ -62,7 +62,7 @@ int(kbd_test_scan)() {
       }
     }
   }
-  if (kbd_print_no_sysinb(counter) != 0)
+  if (kbd_print_no_sysinb(inb_counter) != 0)
     return 1;
   if (keyboard_unsubscribe_int() != 0)
     return 1;
@@ -76,13 +76,14 @@ int(kbd_test_poll)() {
   return 1;
 }
 
+extern int counter;
+
 int(kbd_test_timed_scan)(uint8_t n) {
   int ipc_status;
   message msg;
   int r;
   uint8_t irqk_set;
   uint8_t irqt_set;
-  uint32_t counter = 0;
   uint8_t time = n;
 
   if (keyboard_subscribe_int(&irqk_set) != 0) {
@@ -101,8 +102,9 @@ int(kbd_test_timed_scan)(uint8_t n) {
       switch (_ENDPOINT_P(msg.m_source)) {
         case HARDWARE:
           if (msg.m_notify.interrupts & irqk_set) {
+            time = n;
+            counter = 0;
             kbc_ih();
-            counter += 2;
             if (scancode & BIT(7)) {
               kbd_print_scancode(false, scancode == 0xE0 ? 2 : 1, &scancode);
             }
@@ -111,8 +113,9 @@ int(kbd_test_timed_scan)(uint8_t n) {
             }
           }
           if (msg.m_notify.interrupts & irqt_set) {
-            if (counter % sys_hz() == 0) {
-              n--;
+            timer_int_handler();
+            if(counter % sys_hz() == 0){
+              time--;
             }
           }
       }
@@ -120,7 +123,9 @@ int(kbd_test_timed_scan)(uint8_t n) {
   }
   if (keyboard_unsubscribe_int() != 0)
     return 1;
-  if (kbd_print_no_sysinb(counter) != 0)
+  if (kbd_print_no_sysinb(inb_counter) != 0)
+    return 1;
+  if(timer_unsubscribe_int() != 0)
     return 1;
   return 0;
 }
