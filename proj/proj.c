@@ -44,7 +44,19 @@ int (proj_main_loop)(int argc, char* argv[]) {
   set_frame_buffer(0x115);
   paint_screen(64, 64, 64);
   draw_rectangle(0, 0, 104, 35, 0, 0, 0);
-  draw_string(5,5,"EXIT", 255, 255, 255);
+  draw_string(5,5,"EXIT", 3, 255, 255, 255);
+  draw_string(80, 125, "SPEED TEST", 8, 255, 255, 255);
+  draw_rectangle(80, 200, 640, 10, 255, 255, 255);
+  draw_rectangle(310, 290, 180, 60, 0, 0, 0);
+  draw_rectangle(270, 365, 260, 60, 0, 0, 0);
+  draw_rectangle(310, 440, 180, 60, 0, 0, 0);
+  draw_rectangle(315, 295, 170, 50, 0, 255, 0);
+  draw_rectangle(275, 370, 250, 50, 255, 255, 0);
+  draw_rectangle(315, 445, 170, 50, 255, 0, 0);
+  draw_string(320, 300, "EASY", 5, 0, 0, 0);
+  draw_string(280, 375, "MEDIUM", 5, 0, 0, 0);
+  draw_string(320, 450, "HARD", 5, 0, 0, 0);
+
 
   while (scancode != 0x81) {
     if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) {

@@ -3,20 +3,59 @@
 > proj_main_loop(0, [NULL])
   @kbd.c:28, keyboard_subscribe_int
     sys_irqsetpolicy(KEYBOARD_IRQ, IRQ_REENABLE|IRQ_EXCLUSIVE, &keyboard_hook_id)
-  > sys_irqsetpolicy(1, 3, addr: 0x822c1cc [1])
-  < sys_irqsetpolicy(1, 3, addr: 0x822c1cc [10]) -> (ret: 0)
+  > sys_irqsetpolicy(1, 3, addr: 0x822d314 [1])
+  < sys_irqsetpolicy(1, 3, addr: 0x822d314 [10]) -> (ret: 0)
   @graphic.c:18, set_graphic_mode
     sys_int86(&reg86)
-  > sys_int86(addr: 0xeffff700 [AX: 4f02, BX: 4110, CX: 0000, DX: 0000, ES: 0000, DI: 0000])
-  < sys_int86(addr: 0xeffff700 [AX: 004f, BX: 4110, CX: 0000, DX: 0000, ES: 0000, DI: 0000]) -> (ret: 0)
+  > sys_int86(addr: 0xeffff700 [AX: 4f02, BX: 4115, CX: 0000, DX: 0000, ES: 0000, DI: 0000])
+  < sys_int86(addr: 0xeffff700 [AX: 004f, BX: 4115, CX: 0000, DX: 0000, ES: 0000, DI: 0000]) -> (ret: 0)
   @graphic.c:26, set_frame_buffer
     vbe_get_mode_info(mode, &mode_info)
-  > vbe_get_mode_info(0x110, addr: 0x8248be0)
-  < vbe_get_mode_info(0x110, addr: 0x8248be0 [0xe0000000, 640x480, 5:5:5 (15) <600 KiB>]) -> (ret: 0)
+  > vbe_get_mode_info(0x115, addr: 0x8249d20)
+  < vbe_get_mode_info(0x115, addr: 0x8249d20 [0xe0000000, 800x600, 8:8:8 (24) <1.37329 MiB>]) -> (ret: 0)
   @graphic.c:35, set_frame_buffer
     sys_privctl(SELF, SYS_PRIV_ADD_MEM, &p_address)
-  > sys_privctl(SELF, SYS_PRIV_ADD_MEM, addr: 0xeffff728 [0xe0000000 - 0xe0096000 <600 KiB>])
+  > sys_privctl(SELF, SYS_PRIV_ADD_MEM, addr: 0xeffff728 [0xe0000000 - 0xe015f900 <1.37329 MiB>])
   < sys_privctl(SELF, SYS_PRIV_ADD_MEM, &p_address) -> (ret: 0)
   @graphic.c:37, set_frame_buffer
     vm_map_phys(SELF, (void*) p_address.mr_base, frame_size)
-  < vm_map_phys(SELF, addr: 0xe0000000, 600 KiB) -> (ret: 0xef965000)
+  < vm_map_phys(SELF, addr: 0xe0000000, 1.37329 MiB) -> (ret: 0xef89b000)
+  @proj.c:62, proj_main_loop
+    driver_receive(ANY, &msg, &ipc_status)
+  > driver_receive(ANY, addr: 0xeffff760, addr: 0xeffff7a8)
+  < driver_receive(<[HARDWARE: 0b0000000000000000000000000000000000000000000000000000000000000010]>)
+  @proj.c:70, proj_main_loop
+    kbc_ih()
+    @./utils.c:19, util_sys_inb
+      sys_inb(port, &temp)
+    > sys_inb(0x64, addr: 0xeffff688)
+    < sys_inb(0x64, addr: 0xeffff688 [0x1d = 0b00011101])
+    @./utils.c:19, util_sys_inb
+      sys_inb(port, &temp)
+    > sys_inb(0x60, addr: 0xeffff688)
+    < sys_inb(0x60, addr: 0xeffff688 [0x01 = 0b00000001])
+  @proj.c:62, proj_main_loop
+    driver_receive(ANY, &msg, &ipc_status)
+  > driver_receive(ANY, addr: 0xeffff760, addr: 0xeffff7a8)
+  < driver_receive(<[HARDWARE: 0b0000000000000000000000000000000000000000000000000000000000000010]>)
+  @proj.c:70, proj_main_loop
+    kbc_ih()
+    @./utils.c:19, util_sys_inb
+      sys_inb(port, &temp)
+    > sys_inb(0x64, addr: 0xeffff688)
+    < sys_inb(0x64, addr: 0xeffff688 [0x1d = 0b00011101])
+    @./utils.c:19, util_sys_inb
+      sys_inb(port, &temp)
+    > sys_inb(0x60, addr: 0xeffff688)
+    < sys_inb(0x60, addr: 0xeffff688 [0x81 = 0b10000001])
+  @proj.c:75, proj_main_loop
+    printf("Off the game")
+    "Off the game"
+  @kbd.c:32, keyboard_unsubscribe_int
+    sys_irqrmpolicy(&keyboard_hook_id)
+  > sys_irqrmpolicy(addr: 0x822d314 [10])
+  < sys_irqrmpolicy(addr: 0x822d314 [10]) -> (ret: 0)
+  @proj.c:78, proj_main_loop
+    vg_exit()
+  < vg_exit() -> (ret: 0)
+< proj_main_loop(0, [NULL]) -> (ret: 0)

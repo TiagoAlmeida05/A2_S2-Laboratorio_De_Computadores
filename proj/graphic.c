@@ -44,9 +44,9 @@ void paint_screen(uint8_t r, uint8_t g, uint8_t b){
   for(unsigned y = 0; y < mode_info.YResolution; y++){
     for(unsigned x = 0; x < mode_info.XResolution; x++){
       unsigned i = (y *  mode_info.XResolution + x) * 3;
-      frame_buffer[i] = r;
+      frame_buffer[i] = b;
       frame_buffer[i + 1] = g;
-      frame_buffer[i + 2] = b;
+      frame_buffer[i + 2] = r;
     }
   }
 }
@@ -54,9 +54,9 @@ void paint_screen(uint8_t r, uint8_t g, uint8_t b){
 void draw_pixel(uint16_t x, uint16_t y, uint8_t r, uint8_t g, uint8_t b){
   if(x >= mode_info.XResolution || y >= mode_info.YResolution) return ;
   unsigned i = (y *  mode_info.XResolution + x) * 3;
-  frame_buffer[i] = r;
+  frame_buffer[i] = b;
   frame_buffer[i + 1] = g;
-  frame_buffer[i + 2] = b;
+  frame_buffer[i + 2] = r;
 }
 
 void draw_rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh, uint8_t r, uint8_t g, uint8_t b){
@@ -67,14 +67,14 @@ void draw_rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh, uint
   }
 }
 
-void draw_char(uint16_t x, uint16_t y, char c, uint8_t r, uint8_t g, uint8_t b) {
+void draw_char(uint16_t x, uint16_t y, char c, int size, uint8_t r, uint8_t g, uint8_t b) {
   uint8_t *bitmap = (uint8_t *)font8x8_basic[(int)c];
   for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
           if (bitmap[i] & (1 << (7 - j))) {
-              for (int dy = 0; dy < 3; dy++) {
-                  for (int dx = 0; dx < 3; dx++) {
-                      draw_pixel(x + j * 3 + dx, y + i * 3 + dy, r, g, b);
+              for (int dy = 0; dy < size; dy++) {
+                  for (int dx = 0; dx < size; dx++) {
+                      draw_pixel(x + j * size + dx, y + i * size + dy, r, g, b);
                   }
               }
           }
@@ -82,13 +82,13 @@ void draw_char(uint16_t x, uint16_t y, char c, uint8_t r, uint8_t g, uint8_t b) 
   }
 }
 
-void draw_string(uint16_t x, uint16_t y, const char* str, uint8_t r, uint8_t g, uint8_t b){
+void draw_string(uint16_t x, uint16_t y, const char* str, int size, uint8_t r, uint8_t g, uint8_t b){
   while(*str){
     if(*str == ' '){
-      x += 24;
+      x += 8 * size;
     }else{
-      draw_char(x, y,*str, r, g, b);
-      x += 24;      
+      draw_char(x, y,*str, size, r, g, b);
+      x += 8 * size;      
     }
     str++;
   }
