@@ -83,13 +83,19 @@ void draw_char(uint16_t x, uint16_t y, char c, int size, uint8_t r, uint8_t g, u
 }
 
 void draw_string(uint16_t x, uint16_t y, const char* str, int size, uint8_t r, uint8_t g, uint8_t b){
-  while(*str){
-    if(*str == ' '){
+  int i = 0;
+  int baseX = x;
+  while(str[i] != '\0'){
+    if(str[i] == ' '){
       x += 8 * size;
     }else{
-      draw_char(x, y,*str, size, r, g, b);
+      if(x + 8*size >= mode_info.XResolution){
+        y = y + 8*size + 10;
+        x = baseX;
+      }
+      draw_char(x, y,str[i], size, r, g, b);
       x += 8 * size;      
     }
-    str++;
+    i++;  
   }
 }

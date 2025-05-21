@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "graphic.h"
 #include "kbd.h"
+#include "font.h"
 
 int main(int argc, char *argv[]) {
     // sets the language of LCF messages (can be either EN-US or PT-PT)
@@ -40,23 +41,26 @@ int (proj_main_loop)(int argc, char* argv[]) {
     return 1;
   }
 
+  int easy = rand() % 5;
+
   set_graphic_mode(0x115);
   set_frame_buffer(0x115);
   paint_screen(64, 64, 64);
   draw_rectangle(0, 0, 104, 35, 0, 0, 0);
   draw_string(5,5,"EXIT", 3, 255, 255, 255);
-  draw_string(80, 125, "SPEED TEST", 8, 255, 255, 255);
-  draw_rectangle(80, 200, 640, 10, 255, 255, 255);
-  draw_rectangle(310, 290, 180, 60, 0, 0, 0);
-  draw_rectangle(270, 365, 260, 60, 0, 0, 0);
-  draw_rectangle(310, 440, 180, 60, 0, 0, 0);
-  draw_rectangle(315, 295, 170, 50, 0, 255, 0);
-  draw_rectangle(275, 370, 250, 50, 255, 255, 0);
-  draw_rectangle(315, 445, 170, 50, 255, 0, 0);
-  draw_string(320, 300, "EASY", 5, 0, 0, 0);
-  draw_string(280, 375, "MEDIUM", 5, 0, 0, 0);
-  draw_string(320, 450, "HARD", 5, 0, 0, 0);
+  //draw_string(80, 125, "SPEED TEST", 8, 255, 255, 255);
+  //draw_rectangle(80, 200, 640, 10, 255, 255, 255);
+  //draw_rectangle(310, 290, 180, 60, 0, 0, 0);
+  //draw_rectangle(270, 365, 260, 60, 0, 0, 0);
+  //draw_rectangle(310, 440, 180, 60, 0, 0, 0);
+  //draw_rectangle(315, 295, 170, 50, 0, 255, 0);
+  //draw_rectangle(275, 370, 250, 50, 255, 255, 0);
+  //draw_rectangle(315, 445, 170, 50, 255, 0, 0);
+  //draw_string(320, 300, "EASY", 5, 0, 0, 0);
+  //draw_string(280, 375, "MEDIUM", 5, 0, 0, 0);
+  //draw_string(320, 450, "HARD", 5, 0, 0, 0);
 
+  draw_string(20, 125, easy_sentences[easy], 5, 255, 255, 255);
 
   while (scancode != 0x81) {
     if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) {
