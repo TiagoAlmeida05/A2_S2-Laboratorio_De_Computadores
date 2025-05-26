@@ -10,4 +10,5 @@ void draw_pixel(uint16_t x, uint16_t y,uint8_t r, uint8_t g, uint8_t b);
 void draw_rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh, uint8_t r, uint8_t g, uint8_t b);
 void draw_char(uint16_t x, uint16_t y, char c, int size, uint8_t r, uint8_t g, uint8_t b);
 void draw_string(uint16_t x, uint16_t y, const char* str, int size, uint8_t r, uint8_t g, uint8_t b);
+void redraw_letter(int index, int size);
 #endif // KBD_H

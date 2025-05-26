@@ -2,7 +2,7 @@
 PROG=proj
 
 # source code files to be compiled
-SRCS = proj.c graphic.c kbd.c
+SRCS = proj.c graphic.c kbd.c functions.c
 
 # additional compilation flags
 # "-Wall -Wextra -Werror -I . -std=c11 -Wno-unused-parameter" are already set

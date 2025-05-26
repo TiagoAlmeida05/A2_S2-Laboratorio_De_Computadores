@@ -4,6 +4,7 @@
 #include "graphic.h"
 #include "kbd.h"
 #include "font.h"
+#include "functions.h"
 
 int main(int argc, char *argv[]) {
     // sets the language of LCF messages (can be either EN-US or PT-PT)
@@ -31,6 +32,8 @@ int main(int argc, char *argv[]) {
 
 extern uint8_t scancode;
 
+int current_letter = 0;
+
 int (proj_main_loop)(int argc, char* argv[]) {
   int ipc_status;
   message msg;
@@ -41,28 +44,14 @@ int (proj_main_loop)(int argc, char* argv[]) {
     return 1;
   }
 
-  int easy = rand() % 5;
 
   set_graphic_mode(0x115);
   set_frame_buffer(0x115);
-  paint_screen(64, 64, 64);
-  draw_rectangle(0, 0, 104, 35, 0, 0, 0);
-  draw_string(5,5,"EXIT", 3, 255, 255, 255);
-  //draw_string(80, 125, "SPEED TEST", 8, 255, 255, 255);
-  //draw_rectangle(80, 200, 640, 10, 255, 255, 255);
-  //draw_rectangle(310, 290, 180, 60, 0, 0, 0);
-  //draw_rectangle(270, 365, 260, 60, 0, 0, 0);
-  //draw_rectangle(310, 440, 180, 60, 0, 0, 0);
-  //draw_rectangle(315, 295, 170, 50, 0, 255, 0);
-  //draw_rectangle(275, 370, 250, 50, 255, 255, 0);
-  //draw_rectangle(315, 445, 170, 50, 255, 0, 0);
-  //draw_string(320, 300, "EASY", 5, 0, 0, 0);
-  //draw_string(280, 375, "MEDIUM", 5, 0, 0, 0);
-  //draw_string(320, 450, "HARD", 5, 0, 0, 0);
+  
+  draw_easy(5);
 
-  draw_string(20, 125, easy_sentences[easy], 5, 255, 255, 255);
-
-  while (scancode != 0x81) {
+  bool done = false;
+  while (scancode != 0x81 && current_letter < letters_count) {
     if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) {
       printf("driver_receive failed with: %d", r);
       continue;
@@ -71,8 +60,22 @@ int (proj_main_loop)(int argc, char* argv[]) {
       switch (_ENDPOINT_P(msg.m_source)) {
         case HARDWARE:
           if (msg.m_notify.interrupts & irq_set) {
-            kbc_ih();
-          }
+            kbc_ih(); 
+            if (scancode != 0) {
+                char key = scancode_to_char[scancode];
+                if (key != 0) {
+                    if (key >= 'a' && key <= 'z')
+                        key = key - 'a' + 'A';
+
+                    process_key(key, 5); 
+                    if (current_letter >= letters_count) {
+                        done = true;
+                    }
+                }
+                scancode = 0;
+            }
+        }
+        break;
       }
     }
   }

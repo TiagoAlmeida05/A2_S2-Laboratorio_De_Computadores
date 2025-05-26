@@ -67,6 +67,9 @@ void draw_rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh, uint
   }
 }
 
+Letter letters[256];
+int letters_count = 0;
+
 void draw_char(uint16_t x, uint16_t y, char c, int size, uint8_t r, uint8_t g, uint8_t b) {
   uint8_t *bitmap = (uint8_t *)font8x8_basic[(int)c];
   for (int i = 0; i < 8; i++) {
@@ -85,17 +88,49 @@ void draw_char(uint16_t x, uint16_t y, char c, int size, uint8_t r, uint8_t g, u
 void draw_string(uint16_t x, uint16_t y, const char* str, int size, uint8_t r, uint8_t g, uint8_t b){
   int i = 0;
   int baseX = x;
+  int char_w = 8*size;
+  int char_h = 8*size;
+  letters_count = 0;
+
   while(str[i] != '\0'){
-    if(str[i] == ' '){
-      x += 8 * size;
-    }else{
-      if(x + 8*size >= mode_info.XResolution){
-        y = y + 8*size + 10;
-        x = baseX;
-      }
-      draw_char(x, y,str[i], size, r, g, b);
-      x += 8 * size;      
+
+    int word_l = 0;
+
+    while(str[i + word_l] != ' ' && str[i + word_l] != '\0'){
+      word_l++;
     }
-    i++;  
+
+    int word_w = word_l* char_w;
+
+    if(x + word_w >= mode_info.XResolution){
+      y += char_h + 10;
+      x = baseX;
+    }
+
+    for(int j = 0; j <word_l; j++){
+      draw_char(x, y,str[i], size, r, g, b);
+
+      letters[letters_count].x = x;
+      letters[letters_count].y = y;
+      letters[letters_count].c = str[i];
+      letters[letters_count].r = 255;
+      letters[letters_count].g = 255;
+      letters[letters_count].b = 255;
+      letters_count++;
+
+      x += 8 * size;  
+      i++;
+    }
+
+    if(str[i] == ' '){
+      x += char_w;
+      i++;
+    }
   }
+}
+
+void redraw_letter(int index, int size) {
+    if (index < 0 || index >= letters_count) return;
+    Letter *letter = &letters[index];
+    draw_char(letter->x, letter->y, letter->c, size, letter->r, letter->g, letter->b);
 }

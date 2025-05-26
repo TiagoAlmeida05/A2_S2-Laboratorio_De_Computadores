@@ -52,12 +52,51 @@ static const char *medium_sentences[5] = {
 };
 
 static const char *hard_sentences[5] = {
-    "WHILE WANDERING THROUGH THE EERIE FOREST, WE STUMBLED UPON AN ABANDONED, IVY-CLAD COTTAGE",
+    "WHILE WANDERING THROUGH THE EERIE FOREST WE STUMBLED UPON AN ABANDONED IVY CLAD COTTAGE",
     "THE JUXTAPOSITION OF MODERN TECHNOLOGY AND ANCIENT TRADITION CREATES A FASCINATING CONTRAST",
-    "DESPITE THE CACOPHONY OF VOICES, SHE MANAGED TO FOCUS ON THE DELICATE MELODY",
-    "AN EXQUISITELY EMBROIDERED TAPESTRY HUNG ABOVE THE GRAND FIREPLACE, DEPICTING TALES OF FORGOTTEN EMPIRES",
-    "THE PROFESSOR'S MONOTONOUS LECTURE ON METAPHYSICAL PARADOXES TESTED THE PATIENCE OF EVEN THE KEENEST STUDENTS"
+    "DESPITE THE CACOPHONY OF VOICES SHE MANAGED TO FOCUS ON THE DELICATE MELODY",
+    "AN EXQUISITELY EMBROIDERED TAPESTRY HUNG ABOVE THE GRAND FIREPLACE DEPICTING TALES OF FORGOTTEN EMPIRES",
+    "THE PROFESSORS MONOTONOUS LECTURE ON METAPHYSICAL PARADOXES TESTED THE PATIENCE OF EVEN THE KEENEST STUDENTS"
 };
 
+static const char scancode_to_char[256] = {
+    [0x10] = 'q',
+    [0x11] = 'w',
+    [0x12] = 'e',
+    [0x13] = 'r',
+    [0x14] = 't',
+    [0x15] = 'y',
+    [0x16] = 'u',
+    [0x17] = 'i',
+    [0x18] = 'o',
+    [0x19] = 'p',
+    [0x1E] = 'a',
+    [0x1F] = 's',
+    [0x20] = 'd',
+    [0x21] = 'f',
+    [0x22] = 'g',
+    [0x23] = 'h',
+    [0x24] = 'j',
+    [0x25] = 'k',
+    [0x26] = 'l',
+    [0x2C] = 'z',
+    [0x2D] = 'x',
+    [0x2E] = 'c',
+    [0x2F] = 'v',
+    [0x30] = 'b',
+    [0x31] = 'n',
+    [0x32] = 'm',
+    [0x39] = ' '
+};
+
+typedef struct {
+  uint16_t x;
+  uint16_t y;
+  char c;
+  uint8_t r, g, b;
+} Letter;
+
+extern Letter letters[256];
+extern int letters_count;
 
 #endif
