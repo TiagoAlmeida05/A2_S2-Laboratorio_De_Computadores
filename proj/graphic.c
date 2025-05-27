@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "font.h"
+#include "functions.h"
 
 vbe_mode_info_t mode_info;
 uint8_t *frame_buffer;
@@ -133,4 +134,22 @@ void redraw_letter(int index, int size) {
     if (index < 0 || index >= letters_count) return;
     Letter *letter = &letters[index];
     draw_char(letter->x, letter->y, letter->c, size, letter->r, letter->g, letter->b);
+}
+
+void draw_time_centered(uint16_t y, int counter, int size, uint8_t r, uint8_t g, uint8_t b) {
+    int seconds = counter / 60;
+    int milliseconds = (counter % 60) * 1000 / 60;
+
+    char time_str[32];
+    sprintf(time_str, "TIME: %d.%03d s", seconds, milliseconds);
+
+    int time_width = string_pixel_width(time_str, size);
+    int x = (mode_info.XResolution - time_width) / 2;
+
+    int i = 0;
+    while (time_str[i] != '\0') {
+        draw_char(x, y, time_str[i], size, r, g, b);
+        x += 8 * size;
+        i++;
+    }
 }
