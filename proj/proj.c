@@ -159,7 +159,7 @@ int (proj_main_loop)(int argc, char* argv[]) {
         draw_rectangle(150, 20, mode_info.XResolution - 150, 30, 64, 64, 64);
         draw_time_centered(20, counter, 2, 255, 255, 255);
       }else if (game_state == 5 && !screen_drawn) {
-        draw_rectangle(0, mode_info.YResolution / 2 - 40, mode_info.XResolution, 80, 0, 0, 0);
+        draw_rectangle(0, mode_info.YResolution / 2 - 40, mode_info.XResolution, 150, 0, 0, 0);
 
         draw_time_centered(mode_info.YResolution / 2 - 10, final_time_counter, 3, 255, 255, 255);
 
