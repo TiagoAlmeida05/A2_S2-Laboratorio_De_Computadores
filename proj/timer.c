@@ -107,4 +107,31 @@ int(timer_display_conf)(uint8_t timer, uint8_t conf, enum timer_status_field fie
     if (timer_print_config(timer, field, data) != 0) return 1;
     return 0;
 }
+void (wait_ms)(int time_ms){
+  int ipcStatus;
+  message msg;
+  uint8_t bitNo;
+  int r;
+
+  counter = 0;
+  int ticksToWait = (tempo_ms + 16) / 17;
+
+  timer_subscribe_int(&bit_no);
+
+  while (counter < ticksToWait) {
+    if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0){
+        continue;
+    } 
+
+    if (is_ipc_notify(ipcStatus)) {
+      if (_ENDPOINT_P(msg.m_source) == HARDWARE) {
+        if (msg.m_notify.interrupts & BIT(bit_no)) {
+          timer_int_handler();
+        }
+      }
+    }
+  }
+
+  timer_unsubscribe_int();
+}
 
