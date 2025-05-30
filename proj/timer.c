@@ -4,7 +4,19 @@
 #include <stdint.h>
 
 #include "i8254.h"
-int counter = 0;
+
+
+int counter = 0;    /**  @brief Contador global de interrupções do timer */
+
+
+/**
+ * @brief Configura a frequência de operação de um dos timers do i8254.
+ *
+ * @param timer Timer a configurar (0, 1 ou 2).
+ * @param freq Frequência desejada (deve ser maior que 18 Hz e menor que TIMER_FREQ).
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
+
 int(timer_set_frequency)(uint8_t timer, uint32_t freq) {
   if (freq < 19 || freq > TIMER_FREQ) {
     printf("Invalid timer or frequency\n");
@@ -39,7 +51,15 @@ int(timer_set_frequency)(uint8_t timer, uint32_t freq) {
   return 0;
 }
 
-int hook_id = 0;
+int hook_id = 0;    /** ID do hook para interrupções do timer*/
+
+/**
+ * @brief Subscreve as interrupções do timer.
+ *
+ * @param bit_no Ponteiro para armazenar o número do bit correspondente ao hook_id.
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
+
 int(timer_subscribe_int)(uint8_t *bit_no) {
   *bit_no = BIT(hook_id);
   if (sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &hook_id) != 0) {
@@ -47,6 +67,12 @@ int(timer_subscribe_int)(uint8_t *bit_no) {
   }
   return 0;
 }
+
+/**
+ * @brief Cancela a subscrição das interrupções do timer.
+ *
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
 
 int(timer_unsubscribe_int)() {
   if (sys_irqrmpolicy(&hook_id) != 0) {
@@ -56,9 +82,23 @@ int(timer_unsubscribe_int)() {
   return 0;
 }
 
+/**
+ * @brief Handler da interrupção do timer.
+ *
+ * Incrementa a variável global `counter` a cada interrupção.
+ */
+
 void(timer_int_handler)() {
   counter++;
 }
+
+/**
+ * @brief Lê a configuração atual de um dos timers.
+ *
+ * @param timer Timer cujo estado será lido (0, 1 ou 2).
+ * @param st Ponteiro para armazenar o valor da configuração do timer.
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
 
 int(timer_get_conf)(uint8_t timer, uint8_t *st) {
   if(st == NULL || timer > 2 || timer < 0) return 1;
@@ -69,6 +109,15 @@ int(timer_get_conf)(uint8_t timer, uint8_t *st) {
   if(util_sys_inb(TIMER_0 + timer, st)) return 1;
   return 0;
 }
+
+/**
+ * @brief Exibe a configuração do timer no terminal.
+ *
+ * @param timer Timer cujo estado será exibido (0, 1 ou 2).
+ * @param conf Valor da configuração do timer.
+ * @param field Campo específico da configuração a ser exibido.
+ * @return 0 em caso de sucesso, 1 em caso de erro.
+ */
 
 int(timer_display_conf)(uint8_t timer, uint8_t conf, enum timer_status_field field) {
   union timer_status_field_val data;
@@ -107,6 +156,15 @@ int(timer_display_conf)(uint8_t timer, uint8_t conf, enum timer_status_field fie
     if (timer_print_config(timer, field, data) != 0) return 1;
     return 0;
 }
+
+/**
+ * @brief Aguarda um período de tempo em milissegundos usando o timer.
+ *
+ * Subscreve o timer, espera um número de interrupções correspondente ao tempo desejado,
+ * e depois cancela a subscrição.
+ *
+ * @param time_ms Tempo a aguardar, em milissegundos.
+ */
 
 void (wait_ms)(int time_ms){
   int ipcStatus;
