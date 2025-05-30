@@ -7,34 +7,47 @@
 #include "functions.h"
 #include "timer.c"
 
+/**
+ * @brief Função principal da aplicação baseada no LCF.
+ * 
+ * Define configurações do LCF e entrega o controlo ao framework.
+ * 
+ * @param argc Número de argumentos.
+ * @param argv Vetor de argumentos.
+ * @return int Retorna 0 em caso de sucesso, 1 em caso de erro.
+ */
+
 int main(int argc, char *argv[]) {
-    // sets the language of LCF messages (can be either EN-US or PT-PT)
+    
     lcf_set_language("EN-US");
   
-    // enables to log function invocations that are being "wrapped" by LCF
-    // [comment this out if you don't want/need it]
     lcf_trace_calls("/home/lcom/labs/proj/trace.txt");
   
-    // enables to save the output of printf function calls on a file
-    // [comment this out if you don't want/need it]
     lcf_log_output("/home/lcom/labs/proj/output.txt");
   
-    // handles control over to LCF
-    // [LCF handles command line arguments and invokes the right function]
     if (lcf_start(argc, argv))
       return 1;
   
-    // LCF clean up tasks
-    // [must be the last statement before return]
     lcf_cleanup();
   
     return 0;
   }
 
+// Variáveis externas usadas entre módulos
 extern uint8_t scancode;
 extern int counter;
 int current_letter = 0;
 extern vbe_mode_info_t mode_info;
+
+/**
+ * @brief Ciclo principal do projeto executado após a inicialização pelo LCF.
+ * 
+ * Garante o tratamento das interrupções, lógica dos estados do jogo, desenho do ecrã e processamento do teclado.
+ * 
+ * @param argc Número de argumentos.
+ * @param argv Vetor de argumentos.
+ * @return int Retorna 0 em caso de sucesso, valor diferente de 0 em caso de erro.
+ */
 
 int (proj_main_loop)(int argc, char* argv[]) {
   int ipc_status;
@@ -70,6 +83,8 @@ int (proj_main_loop)(int argc, char* argv[]) {
     if (!is_ipc_notify(ipc_status)) 
       continue;
 
+    // Interrupção do teclado
+
     if (msg.m_notify.interrupts & irq_seth) {
       kbc_ih();
       if (scancode == 0) continue;
@@ -77,6 +92,8 @@ int (proj_main_loop)(int argc, char* argv[]) {
       char key = scancode_to_char[scancode];
       if (key >= 'a' && key <= 'z') 
         key = key - 'a' + 'A';
+
+      // Gestão dos estados do jogo
 
       switch (game_state) {
         case 0:
@@ -153,6 +170,8 @@ int (proj_main_loop)(int argc, char* argv[]) {
       scancode = 0;
     }
 
+     // Interrupção do temporizador
+     
     if (msg.m_notify.interrupts & irq_sett) {
       timer_int_handler();
 
