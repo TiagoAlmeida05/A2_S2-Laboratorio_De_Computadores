@@ -5,11 +5,11 @@ int mouseHookId = MOUSE_IRQ;
 uint8_t packetBytes[3];
 uint8_t byteIndex = 0;
 
-mouse_packet packet;
+struct mouse_packet packet;
 
 int (mouse_subscribe_int)(uint8_t *bit_no){
     *bit_no = mouseHookId;
-    return sys_irqrmpolicy(MOUSE_IRQ,IRQ_REENABLE|IRQ_EXCLUSIVE,&mouseHookId);
+    return sys_irqsetpolicy(MOUSE_IRQ,IRQ_REENABLE|IRQ_EXCLUSIVE,&mouseHookId);
 }
 
 int(mouse_unsubscribe_int)(){
@@ -47,7 +47,7 @@ void (mouse_ih)(){
                 packet.bytes[i] = packetBytes[i];
             }
             mouse_process_packet();
-            byteIndex = 0
+            byteIndex = 0;
         }
     }
 }
