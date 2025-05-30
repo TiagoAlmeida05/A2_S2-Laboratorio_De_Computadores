@@ -58,6 +58,7 @@ int (proj_main_loop)(int argc, char* argv[]) {
   int final_time_counter = 0; 
 
   draw_menu();
+  draw_mouse();
   screen_drawn = true;
 
   while (running) {

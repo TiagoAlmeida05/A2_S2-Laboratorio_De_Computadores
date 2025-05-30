@@ -71,4 +71,3 @@ int (mouse_write_command)(uint8_t command) {
 
     return 1;
 }
-

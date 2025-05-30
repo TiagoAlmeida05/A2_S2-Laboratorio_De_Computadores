@@ -75,3 +75,21 @@ int string_pixel_width(const char* str, int size) {
   int len = strlen(str);
   return len * 8 * size;
 }
+
+void draw_mouse() {
+    uint16_t x = mode_info.XResolution / 2;
+    uint16_t y = mode_info.YResolution / 2;
+
+    uint8_t r = 255, g = 255, b = 255;
+    int size = 10;
+
+    
+    for (int i = -size; i <= size; i++) {
+        draw_pixel(x + i, y, r, g, b);
+    }
+
+    
+    for (int i = -size; i <= size; i++) {
+        draw_pixel(x, y + i, r, g, b);
+    }
+}
